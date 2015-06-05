@@ -11,6 +11,8 @@ list(APPEND WTF_SOURCES
     mac/DeprecatedSymbolsUsedBySafari.mm
     mac/MainThreadMac.mm
 
+    ios/WebCoreThread.cpp
+
     text/cf/AtomicStringImplCF.cpp
     text/cf/StringCF.cpp
     text/cf/StringImplCF.cpp

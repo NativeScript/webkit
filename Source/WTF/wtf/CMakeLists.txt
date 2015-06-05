@@ -214,6 +214,7 @@ set(WTF_SOURCES
     threads/BinarySemaphore.cpp
 
     unicode/UTF8.cpp
+    unicode/CollatorDefault.cpp
 )
 
 set(WTF_INCLUDE_DIRECTORIES
