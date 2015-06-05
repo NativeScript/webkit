@@ -1,13 +1,18 @@
+if (JSC_OBJC_API_ENABLED)
+    list(APPEND JavaScriptCore_SOURCES
+        API/JSAPIWrapperObject.mm
+        API/JSContext.mm
+        API/JSManagedValue.mm
+        API/JSValue.mm
+        API/JSVirtualMachine.mm
+        API/JSWrapperMap.mm
+        API/ObjCCallbackFunction.mm
+    )
+endif ()
+
 list(APPEND JavaScriptCore_SOURCES
-    API/JSAPIWrapperObject.mm
-    API/JSContext.mm
-    API/JSManagedValue.mm
-    API/JSRemoteInspector.cpp
     API/JSStringRefCF.cpp
-    API/JSValue.mm
-    API/JSVirtualMachine.mm
-    API/JSWrapperMap.mm
-    API/ObjCCallbackFunction.mm
+    API/JSRemoteInspector.cpp
 
     inspector/remote/RemoteAutomationTarget.cpp
     inspector/remote/RemoteConnectionToTarget.mm
