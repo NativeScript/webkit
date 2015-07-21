@@ -55,9 +55,10 @@ public:
     unsigned sizeInBytes() { return m_sizeInBytes; }
 
 private:
-    ArrayBufferContents(void* data, unsigned sizeInBytes, ArrayBufferDestructorFunction&& destructor)
+    ArrayBufferContents(void* data, unsigned sizeInBytes, ArrayBufferDestructorFunction&& destructor, bool freeWhenDone = true)
         : m_data(data)
         , m_sizeInBytes(sizeInBytes)
+        , m_freeWhenDone(freeWhenDone)
     {
         m_destructor = WTFMove(destructor);
     }
@@ -91,6 +92,7 @@ private:
     ArrayBufferDestructorFunction m_destructor;
     void* m_data;
     unsigned m_sizeInBytes;
+    bool m_freeWhenDone;
 };
 
 class ArrayBuffer : public GCIncomingRefCounted<ArrayBuffer> {
@@ -99,7 +101,7 @@ public:
     static inline Ref<ArrayBuffer> create(ArrayBuffer&);
     static inline Ref<ArrayBuffer> create(const void* source, unsigned byteLength);
     static inline Ref<ArrayBuffer> create(ArrayBufferContents&);
-    static inline Ref<ArrayBuffer> createAdopted(const void* data, unsigned byteLength);
+    static inline Ref<ArrayBuffer> createAdopted(const void* data, unsigned byteLength, bool freeWhenDone = true);
     static inline Ref<ArrayBuffer> createFromBytes(const void* data, unsigned byteLength, ArrayBufferDestructorFunction&&);
     static inline RefPtr<ArrayBuffer> tryCreate(unsigned numElements, unsigned elementByteSize);
     static inline RefPtr<ArrayBuffer> tryCreate(ArrayBuffer&);
@@ -182,14 +184,14 @@ Ref<ArrayBuffer> ArrayBuffer::create(ArrayBufferContents& contents)
     return adoptRef(*new ArrayBuffer(contents));
 }
 
-Ref<ArrayBuffer> ArrayBuffer::createAdopted(const void* data, unsigned byteLength)
+Ref<ArrayBuffer> ArrayBuffer::createAdopted(const void* data, unsigned byteLength, bool freeWhenDone = true)
 {
-    return createFromBytes(data, byteLength, WTFMove(arrayBufferDestructorDefault));
+    return createFromBytes(data, byteLength, WTFMove(arrayBufferDestructorDefault), freeWhenDone);
 }
 
-Ref<ArrayBuffer> ArrayBuffer::createFromBytes(const void* data, unsigned byteLength, ArrayBufferDestructorFunction&& destructor)
+Ref<ArrayBuffer> ArrayBuffer::createFromBytes(const void* data, unsigned byteLength, ArrayBufferDestructorFunction&& destructor, bool freeWhenDone = true)
 {
-    ArrayBufferContents contents(const_cast<void*>(data), byteLength, WTFMove(destructor));
+    ArrayBufferContents contents(const_cast<void*>(data), byteLength, WTFMove(destructor), freeWhenDone);
     return create(contents);
 }
 
@@ -342,7 +344,8 @@ void ArrayBufferContents::tryAllocate(unsigned numElements, unsigned elementByte
 
 ArrayBufferContents::~ArrayBufferContents()
 {
-    m_destructor(m_data);
+    if (LIKELY(m_freeWhenDone))
+        m_destructor(m_data);
 }
 
 } // namespace JSC
