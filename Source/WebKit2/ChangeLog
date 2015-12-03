@@ -1,335 +1,127 @@
-2016-09-28  Joseph Pecoraro  <pecoraro@apple.com>
+2015-12-03  Anders Carlsson  <andersca@apple.com>
 
-        WKSharedAPICast should not warn about acceptable custom context menu tag values
-        https://bugs.webkit.org/show_bug.cgi?id=162597
-        <rdar://problem/28487627>
-
-        Reviewed by Tim Horton.
-
-        * Shared/API/c/WKSharedAPICast.h:
-        (WebKit::toAPI):
-        (WebKit::toImpl):
-        Don't log an error when casting ContextMenu types if it is within
-        the Custom ContextMenu tag range.
-
-2016-09-27  Wenson Hsieh  <wenson_hsieh@apple.com>
-
-        Adopt MediaRemote SPI to achieve desired Now Playing behavior
-        https://bugs.webkit.org/show_bug.cgi?id=162658
-        <rdar://problem/28499358>
-
-        Reviewed by Jer Noble.
-
-        Plumbs Now Playing session information (for now, this is just a flag indicating whether or not there is an
-        active session) across from the web process to the UI process for testing in the form of asynchronous request/
-        handle-response messages on the WebPage and its proxy in the UI process.
-
-        * UIProcess/API/Cocoa/WKWebView.mm:
-        (-[WKWebView _requestActiveNowPlayingSessionInfo]):
-        (-[WKWebView _handleActiveNowPlayingSessionInfoResponse:]):
-        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
-        * UIProcess/PageClient.h:
-        * UIProcess/WebPageProxy.cpp:
-        (WebKit::WebPageProxy::requestActiveNowPlayingSessionInfo):
-        (WebKit::WebPageProxy::handleActiveNowPlayingSessionInfoResponse):
-        * UIProcess/WebPageProxy.h:
-        * UIProcess/WebPageProxy.messages.in:
-        * UIProcess/mac/PageClientImpl.h:
-        * UIProcess/mac/PageClientImpl.mm:
-        (WebKit::PageClientImpl::handleActiveNowPlayingSessionInfoResponse):
-        * WebProcess/WebPage/WebPage.h:
-        * WebProcess/WebPage/WebPage.messages.in:
-        * WebProcess/WebPage/mac/WebPageMac.mm:
-        (WebKit::WebPage::requestActiveNowPlayingSessionInfo):
-
-2016-09-28  Carlos Garcia Campos  <cgarcia@igalia.com>
-
-        [GTK] Switch to use GMenu internally in the context menu implementation
-        https://bugs.webkit.org/show_bug.cgi?id=162603
-
-        Reviewed by Michael Catanzaro.
-
-        Switch to use GAction instead of GtkAction internally, but still keeping a GtkAction associated to the GAction,
-        because our API depends on GtkAction.
-
-        * Shared/gtk/WebContextMenuItemGtk.cpp:
-        (WebKit::WebContextMenuItemGtk::WebContextMenuItemGtk):
-        (WebKit::WebContextMenuItemGtk::createActionIfNeeded): Create the GAction and the associated GtkAction. Ensure a
-        unique name for the GAction, since the name now matters.
-        * Shared/gtk/WebContextMenuItemGtk.h:
-        (WebKit::WebContextMenuItemGtk::gtkAction):
-        (WebKit::WebContextMenuItemGtk::gAction):
-        (WebKit::WebContextMenuItemGtk::submenuItems): Deleted.
-        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
-        (WebKit::contextMenuItemActivatedCallback): Use the GAction.
-        (WebKit::WebContextMenuProxyGtk::append): Create a new GMenuItem for the GAction.
-        (WebKit::WebContextMenuProxyGtk::buildMenu): Build a GMenu for the given items.
-        (WebKit::WebContextMenuProxyGtk::populate): Create a GMenu and bind it ot the GtkMenu.
-        (WebKit::WebContextMenuProxyGtk::WebContextMenuProxyGtk): Create the GActionGroup for the menu.
-        (WebKit::WebContextMenuProxyGtk::~WebContextMenuProxyGtk): Remove the action group from the GtkMenu.
-        * UIProcess/gtk/WebContextMenuProxyGtk.h:
-
-2016-09-27  Daniel Bates  <dabates@apple.com>
-
-        NetworkLoad and PingLoad should use private inheritance
-        https://bugs.webkit.org/show_bug.cgi?id=162649
-
-        Reviewed by Alex Christensen.
-
-        Make NetworkLoad privately inherit from NetworkDataTaskClient and ResourceHandleClient,
-        and make the client callbacks from these interfaces private as this class implements
-        these interfaces.
-
-        Similarly, make PingLoad privately inherit from ResourceHandleClient.
-
-        * NetworkProcess/NetworkLoad.h:
-        * NetworkProcess/PingLoad.h:
-
-2016-09-20  Anders Carlsson  <andersca@apple.com>
-
-        PlatformEvent::m_modifiers should be an OptionSet
-        https://bugs.webkit.org/show_bug.cgi?id=162326
-
-        Reviewed by Daniel Bates.
-
-        * Shared/WebEventConversion.cpp:
-        (WebKit::WebKit2PlatformMouseEvent::WebKit2PlatformMouseEvent):
-        (WebKit::WebKit2PlatformWheelEvent::WebKit2PlatformWheelEvent):
-        (WebKit::WebKit2PlatformKeyboardEvent::WebKit2PlatformKeyboardEvent):
-        (WebKit::WebKit2PlatformGestureEvent::WebKit2PlatformGestureEvent):
-
-2016-09-27  Dan Bernstein  <mitz@apple.com>
-
-        [iOS] REGRESSION (r182126): Selection highlight and handles aren’t visible with WKSelectionGranularityCharacter
-        https://bugs.webkit.org/show_bug.cgi?id=162577
-        <rdar://problem/28481984>
-
-        Reviewed by Simon Fraser.
-
-        * UIProcess/API/Cocoa/WKWebView.mm:
-        (-[WKWebView _uiTextSelectionRectViews]): Added this method in the WKTesting category, which
-          uses UIKit internals to get the views used for the selection highlight.
-        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
-
-        * UIProcess/ios/WKContentViewInteraction.mm:
-        (-[WKContentView _selectionClipRect]): When selection is not confined to a form control or
-          content-editable element, return the null rect to indicate no clipping, rather than
-          clipping to the empty rect at the origin.
-
-2016-09-27  Jer Noble  <jer.noble@apple.com>
-
-        Remove deprecated ENCRYPTED_MEDIA implementation.
-        https://bugs.webkit.org/show_bug.cgi?id=161010
-
-        Reviewed by Eric Carlson.
-
-        Remove ENABLE_ENCRYPTED_MEDIA.
-
-        * Configurations/FeatureDefines.xcconfig:
-
-2016-09-27  Chris Dumez  <cdumez@apple.com>
-
-        [WK2] Navigating to a Blob URL does not trigger a download
-        https://bugs.webkit.org/show_bug.cgi?id=162574
-
-        Reviewed by Darin Adler.
-
-        Add support for converting Blob URL loads into downloads.
-
-        * NetworkProcess/Downloads/BlobDownloadClient.cpp:
-        (WebKit::BlobDownloadClient::didReceiveResponseAsync):
-        Make sure we return a valid suggested filename because the client side (Safari)
-        does not deal with empty suggested filenames. Use "unknown" by default to
-        match the default suggested filename of non-Blob downloads.
-
-        * NetworkProcess/Downloads/Download.cpp:
-        (WebKit::Download::startWithHandle):
-        * NetworkProcess/Downloads/Download.h:
-        * NetworkProcess/Downloads/DownloadManager.cpp:
-        (WebKit::DownloadManager::convertHandleToDownload):
-        * NetworkProcess/Downloads/DownloadManager.h:
-        * NetworkProcess/Downloads/ios/DownloadIOS.mm:
-        (WebKit::Download::startNetworkLoadWithHandle):
-        * NetworkProcess/Downloads/mac/DownloadMac.mm:
-        (WebKit::Download::startNetworkLoadWithHandle):
-        * NetworkProcess/Downloads/soup/DownloadSoup.cpp:
-        (WebKit::Download::startNetworkLoadWithHandle):
-        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
-        (WebKit::NetworkConnectionToWebProcess::convertMainResourceLoadToDownload):
-        * NetworkProcess/NetworkLoad.h:
-        (WebKit::NetworkLoad::handle):
-
-2016-09-27  Michael Catanzaro  <mcatanzaro@igalia.com>
-
-        [GTK] Unreviewed typo fix
-
-        * UIProcess/API/gtk/WebKitWebInspector.cpp:
-        (webkit_web_inspector_class_init):
-
-2016-09-27  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
-
-        [GTK] Should check whether GDK can use GL before asking it to
-        https://bugs.webkit.org/show_bug.cgi?id=162598
-
-        Reviewed by Michael Catanzaro.
-
-        gdk_cairo_draw_from_gl can fail even when WebKit itself has been able to use GL (its
-        context creation code might be buggy, GL may have been disabled using GDK_GL=disable, …).
-        Unfortunately it does not have any error reporting other than a warning printed to
-        stderr, so we cannot fallback from it. We have to first check if GL can be used by GDK
-        by trying to create a context.
-
-        See https://bugzilla.redhat.com/show_bug.cgi?id=1378987
-
-        * UIProcess/gtk/AcceleratedBackingStoreWayland.cpp:
-        (WebKit::AcceleratedBackingStoreWayland::canGdkUseGL): decide whether GDK can use GL by
-        trying to create a context for a GdkWindow.
-        (WebKit::AcceleratedBackingStoreWayland::paint): fallback to glReadPixels if GDK cannot
-        use GL.
-        * UIProcess/gtk/AcceleratedBackingStoreWayland.h:
-
-2016-09-26  Tim Horton  <timothy_horton@apple.com>
-
-        Delete some unused code from r202695
-        https://bugs.webkit.org/show_bug.cgi?id=162595
-        <rdar://problem/28343784>
+        Remove Objective-C GC support
+        https://bugs.webkit.org/show_bug.cgi?id=151819
+        rdar://problem/23746991
 
         Reviewed by Dan Bernstein.
 
-        * UIProcess/API/Cocoa/WKWebView.mm:
-        (-[WKWebView _initializeWithConfiguration:]):
-        (-[WKWebView _setIsBlankBeforeFirstNonEmptyLayout:]): Deleted.
-        (-[WKWebView _didFirstVisuallyNonEmptyLayoutForMainFrame]): Deleted.
-        * UIProcess/API/Cocoa/WKWebViewInternal.h:
-        * UIProcess/ios/PageClientImplIOS.mm:
-        (WebKit::PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame):
-        We didn't end up needing this mechanism.
+        * Configurations/Base.xcconfig:
+        * Configurations/BaseLegacyProcess.xcconfig:
+        * Configurations/BaseXPCService.xcconfig:
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject): Deleted.
 
-2016-09-26  Dan Bernstein  <mitz@apple.com>
+2015-11-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
-        -_webViewWebProcessDidBecomeUnresponsive: gets called when the Web process is stopped in the debugger
-        https://bugs.webkit.org/show_bug.cgi?id=162234
-
-        Reviewed by Sam Weinig.
-
-        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
-        (WebKit::WebProcessProxy::platformIsBeingDebugged): Use the KERN_PROC sysctl to get the
-          process flags and check for P_TRACED.
-
-        * UIProcess/ResponsivenessTimer.cpp:
-        (WebKit::ResponsivenessTimer::timerFired): Call the new client function
-          mayBecomeUnresponsive. If it returns false, restart the timer and bail out without
-          changing the responsiveness state.
-
-        * UIProcess/ResponsivenessTimer.h: Declared new client function mayBecomeUnresponsive.
-
-        * UIProcess/WebProcessProxy.cpp:
-        (WebKit::WebProcessProxy::platformIsBeingDebugged): A generic implementation that always
-          returns false.
-        (WebKit::WebProcessProxy::mayBecomeUnresponsive): Implement this new
-          ResponsivenessTimer::Client function to return true unless the process is being debugged.
-        * UIProcess/WebProcessProxy.h:
-
-2016-09-26  Chris Dumez  <cdumez@apple.com>
-
-        [WK2] BlobDownloadClient should use asynchronous IPC to decide destination path
-        https://bugs.webkit.org/show_bug.cgi?id=162568
+        [GTK] Use the network process unconditionally
+        https://bugs.webkit.org/show_bug.cgi?id=151541
 
         Reviewed by Alex Christensen.
 
-        Use DecideDestinationWithSuggestedFilenameAsync IPC to decide the destination
-        path in the case of Blob downloads, instead of the synchronous alternative.
-        To achieve this, BlobResourceHandle was updated in WebCore to properly support
-        asynchronous callback and BlobDownloadClient was updated to use asynchronous
-        callbacks. When BlobDownloadClient::didReceiveResponseAsync() is called, we
-        now ask the WebContent process asynchronously to decide what the destination
-        path should be. Then, when we later get the destination path back from the
-        WebContent process, we create the file on disk and call
-        continueDidReceiveResponse() on the BlobResourceHandle so we start getting the
-        blob data to write.
+        Make the shared secondary process model become multiple secondary
+        process model with a limit of 1 web process. Use the same options
+        when creating a context with legacy configuration (unit tests and
+        inspector proxy).
 
-        * NetworkProcess/Downloads/BlobDownloadClient.cpp:
-        (WebKit::BlobDownloadClient::didReceiveResponseAsync):
-        (WebKit::BlobDownloadClient::didDecideDownloadDestination):
-        * NetworkProcess/Downloads/BlobDownloadClient.h:
-        * NetworkProcess/Downloads/Download.cpp:
-        (WebKit::Download::decideDestinationWithSuggestedFilenameAsync):
-        (WebKit::Download::didDecideDownloadDestination):
-        (WebKit::Download::continueDidReceiveResponse):
-        (WebKit::Download::decideDestinationWithSuggestedFilename): Deleted.
-        * NetworkProcess/Downloads/Download.h:
-        * NetworkProcess/Downloads/DownloadManager.cpp:
-        (WebKit::DownloadManager::willDecidePendingDownloadDestination):
-        (WebKit::DownloadManager::continueDecidePendingDownloadDestination):
-        (WebKit::DownloadManager::convertHandleToDownload): Deleted.
-        * NetworkProcess/Downloads/DownloadManager.h:
-        * NetworkProcess/NetworkLoad.cpp:
-        (WebKit::NetworkLoad::continueDidReceiveResponse):
-        * NetworkProcess/NetworkProcess.cpp:
-        (WebKit::NetworkProcess::continueDecidePendingDownloadDestination):
-        * NetworkProcess/NetworkProcess.h:
-        * NetworkProcess/NetworkProcess.messages.in:
-        * UIProcess/Downloads/DownloadProxy.cpp:
-        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilenameAsync): Deleted.
-        * UIProcess/Downloads/DownloadProxy.h:
-        * UIProcess/Downloads/DownloadProxy.messages.in:
+        * NetworkProcess/gtk/NetworkProcessMainGtk.cpp:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::createWithLegacyOptions):
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        (webkit_web_context_set_process_model):
+        (webkit_web_context_get_process_model):
+        (webkit_web_context_set_web_process_count_limit):
+        (webkit_web_context_get_web_process_count_limit):
+        (toWebKitProcessModel): Deleted.
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::WebProcessPool::setIgnoreTLSErrors):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
 
-2016-09-26  Daniel Bates  <dabates@apple.com>
+2015-11-23  Brian Burg  <bburg@apple.com>
 
-        Mark Ping{Handle, Load} as final
-        https://bugs.webkit.org/show_bug.cgi?id=162576
+        Web Inspector: inspector settings should not be shared between different inspection levels
+        https://bugs.webkit.org/show_bug.cgi?id=151151
 
-        Reviewed by Alex Christensen.
+        Reviewed by Timothy Hatcher.
 
-        We should not support subclassing of a ping handle or overriding its NetworkDataTaskClient
-        callbacks because there are security/privacy implications with a ping request. We should
-        not encourage subclassing without careful consideration.
+        In WebKit2, we already track the inspection level of WebPages in order to give inspectors
+        different page groups. Send the inspection level to WebInspectorUI WebProcess when
+        establishing a connection from the UIProcess. Use this number in the FrontendClient.
 
-        * NetworkProcess/PingLoad.h:
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::inspectionLevel): Renamed from inspectorLevel to be consistent.
+        (WebKit::WebInspectorProxy::inspectorPageGroupIdentifier):
+        (WebKit::WebInspectorProxy::didRelaunchInspectorPageProcess):
+        (WebKit::WebInspectorProxy::eagerlyCreateInspectorPage):
+        (WebKit::WebInspectorProxy::createInspectorPage):
+        (WebKit::WebInspectorProxy::inspectorLevel): Deleted.
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::updateInspectorWindowTitle):
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::establishConnection):
+        * WebProcess/WebPage/WebInspectorUI.h:
+        * WebProcess/WebPage/WebInspectorUI.messages.in:
 
-2016-09-26  Daniel Bates  <dabates@apple.com>
+2015-11-23  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
-        Rename IOS_TEXT_AUTOSIZING to TEXT_AUTOSIZING
-        https://bugs.webkit.org/show_bug.cgi?id=162365
+        REGRESSION(r188206): [EFL] Missing to adjust scrollbar size to ewk_view_contents_size_get API test
+        https://bugs.webkit.org/show_bug.cgi?id=148735
 
-        Reviewed by Simon Fraser.
+        Reviewed by Csaba Osztrogonác.
 
-        * Configurations/FeatureDefines.xcconfig:
-        * WebProcess/WebPage/WebPage.cpp:
-        (WebKit::WebPage::updatePreferences):
+        r189256 missed to adjust scrollbar size to other tests in ewk_view_contents_size_get() API test.
+        In this case we need to apply scrollbar size to both width and height unlike previous fix. Because
+        horizontal scrollbar is also shown since device pixel ratio(= 2.0) is adjusted.
 
-2016-09-26  Michael Catanzaro  <mcatanzaro@igalia.com>
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
 
-        Fix -Wformat warnings in WebLoaderStrategy
-        https://bugs.webkit.org/show_bug.cgi?id=162553
+2015-11-23  Alex Christensen  <achristensen@webkit.org>
 
-        Reviewed by Alex Christensen.
+        Fix crash in ~WebProcessPool when using Geolocation with useNetworkProcess=true
+        https://bugs.webkit.org/show_bug.cgi?id=151532
 
-        Consistently use PRIu64 to print uint64_t
+        Reviewed by Benjamin Poulain.
 
-        * NetworkProcess/Downloads/Download.cpp:
-        (WebKit::Download::didReceiveResponse):
-        (WebKit::Download::didReceiveData):
-        (WebKit::Download::didFinish):
-        (WebKit::Download::didFail):
-        (WebKit::Download::didCancel):
-        * NetworkProcess/NetworkResourceLoader.cpp:
-        (WebKit::NetworkResourceLoader::start):
-        (WebKit::NetworkResourceLoader::startNetworkLoad):
-        (WebKit::NetworkResourceLoader::setDefersLoading):
-        (WebKit::NetworkResourceLoader::abort):
-        (WebKit::NetworkResourceLoader::didReceiveBuffer):
-        (WebKit::NetworkResourceLoader::didFinishLoading):
-        (WebKit::NetworkResourceLoader::didFailLoading):
-        (WebKit::NetworkResourceLoader::continueWillSendRequest):
-        * WebProcess/Network/WebLoaderStrategy.cpp:
-        (WebKit::WebLoaderStrategy::scheduleLoad):
-        * WebProcess/Network/WebResourceLoader.cpp:
-        (WebKit::WebResourceLoader::willSendRequest):
-        (WebKit::WebResourceLoader::didReceiveResponse):
-        (WebKit::WebResourceLoader::didReceiveData):
-        (WebKit::WebResourceLoader::didFinishResourceLoad):
-        (WebKit::WebResourceLoader::didFailResourceLoad):
-        (WebKit::WebResourceLoader::didReceiveResource):
+        * UIProcess/WebGeolocationManagerProxy.cpp:
+        (WebKit::WebGeolocationManagerProxy::processPoolDestroyed):
+        (WebKit::WebGeolocationManagerProxy::processDidClose):
+        When a WebProcessPool is destroyed, only call stopUpdating if m_updateRequesters.clear()
+        stopped the updating, like we do in WebGeolocationManagerProxy::removeRequester.
+        Otherwise, call setEnableHighAccuracy if needed, also like we do in WebGeolocationManagerProxy::removeRequester.
 
-== Rolled over to ChangeLog-2016-09-26 ==
+2015-11-23  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: when inspecting the inspector, add the inspection level to the title bar
+        https://bugs.webkit.org/show_bug.cgi?id=151555
+
+        Reviewed by Timothy Hatcher.
+
+        If the inspection level says we are inspecting an inspector, include the level
+        in the title bar to easily disambiguate it from the base level inspector.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::updateInspectorWindowTitle):
+
+2015-11-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed speculative buildfix after r192701.
+
+        * PlatformMac.cmake:
+
+2015-11-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.11.2 release.
+
+        * gtk/NEWS: Add release notes for 2.11.2.
+
+2015-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Add missing inspector file to GTK+ compilation.
+
+        * PlatformGTK.cmake:
+
+== Rolled over to ChangeLog-2015-11-21 ==
