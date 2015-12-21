@@ -1941,6 +1941,32 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIterator(ExecState* exec)
 
 static JSValue normalize(ExecState* exec, const UChar* source, size_t sourceLength, UNormalizationMode form)
 {
+#if PLATFORM(IOS) && !USE(APPLE_INTERNAL_SDK)
+    RetainPtr<CFMutableStringRef> normalizedString = adoptCF(CFStringCreateMutable(kCFAllocatorDefault, 0));
+    CFStringAppendCharacters(normalizedString.get(), source, sourceLength);
+    
+    CFStringNormalizationForm normalizationForm;
+    switch (form) {
+        case UNORM_NFC:
+            normalizationForm = kCFStringNormalizationFormC;
+            break;
+        case UNORM_NFD:
+            normalizationForm = kCFStringNormalizationFormD;
+            break;
+        case UNORM_NFKC:
+            normalizationForm = kCFStringNormalizationFormKC;
+            break;
+        case UNORM_NFKD:
+            normalizationForm = kCFStringNormalizationFormKD;
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+    }
+    
+    CFStringNormalize(normalizedString.get(), normalizationForm);
+    return jsString(exec, String(normalizedString.get()));
+#else
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -1961,9 +1987,10 @@ static JSValue normalize(ExecState* exec, const UChar* source, size_t sourceLeng
     status = U_ZERO_ERROR;
     unorm_normalize(source, sourceLength, form, 0, buffer, normalizedStringLength, &status);
     if (U_FAILURE(status))
-        return throwTypeError(exec, scope);
-
-    return jsString(exec, WTFMove(impl));
+        return throwTypeError(exec);
+    
+    return jsString(exec, impl.get());
+#endif
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncNormalize(ExecState* exec)
