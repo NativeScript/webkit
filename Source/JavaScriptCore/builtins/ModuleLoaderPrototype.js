@@ -218,7 +218,7 @@ function instantiation(result, source, entry)
 
     "use strict";
 
-    return this.parseModule(entry.key, source);
+    return result || this.parseModule(entry.key, source);
 }
 
 // Loader.
