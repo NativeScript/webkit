@@ -1156,6 +1156,10 @@
 #define HAVE_COREANIMATION_FENCES 1
 #endif
 
+#if PLATFORM(IOS) && !USE(APPLE_INTERNAL_SDK)
+#define unorm_normalize(source, sourceLength, mode, options, result, resultLength, status) ios_specific_unorm_normalize(source, sourceLength, mode, options, result, resultLength, status)
+#endif
+
 /* FIXME: Enable USE_OS_LOG when building with the public iOS 10 SDK once we fix <rdar://problem/27758343>. */
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000 && USE(APPLE_INTERNAL_SDK))
 #define USE_OS_LOG 1
