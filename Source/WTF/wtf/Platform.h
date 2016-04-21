@@ -24,6 +24,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+ 
+/*
+ * Copyright (C) 2016 Telerik AD. All rights reserved. (as modified)
+ */
 
 #ifndef WTF_Platform_h
 #define WTF_Platform_h
