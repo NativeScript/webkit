@@ -42,6 +42,9 @@ public:
     VM& vm() const { return m_vm; }
     JSGlobalObject* globalObject() const { return m_globalObject; }
 
+    Vector<std::function<void()>>& didPopListeners() {
+      return this->m_didPopListeners;
+    }
     void addDidPopListener(std::function<void ()>);
 
 private:
