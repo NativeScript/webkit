@@ -226,6 +226,14 @@
             "description": "Returns source for the script with given id."
         },
         {
+            "name": "setScriptSource",
+             "parameters": [
+                { "name": "scriptUrl", "type": "string", "description": "Absolute location of the script to set source for." },
+                { "name": "scriptSource", "type": "string", "description": "Script source." }
+             ],
+            "description": "Set source for the script with given id."
+        },
+        {
             "name": "getFunctionDetails",
             "parameters": [
                 { "name": "functionId", "$ref": "Runtime.RemoteObjectId", "description": "Id of the function to get location for." }

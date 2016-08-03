@@ -103,9 +103,17 @@ namespace JSC {
         bool isNull() const { return !m_provider; }
         SourceProvider* provider() const { return m_provider.get(); }
         int firstLine() const { return m_firstLine; }
+        void setFirstLine(int firstLine) { m_firstLine = firstLine; }
+
         int startColumn() const { return m_startColumn; }
+        void startColumn(int startColumn) { m_startColumn = startColumn; }
+
         int startOffset() const { return m_startChar; }
+        void setStartOffset(int startChar) { m_startChar = startChar; }
+
         int endOffset() const { return m_endChar; }
+        void setEndOffset(int endChar) { m_endChar = endChar; }
+
         int length() const { return m_endChar - m_startChar; }
         
         SourceCode subExpression(unsigned openBrace, unsigned closeBrace, int firstLine, int startColumn);

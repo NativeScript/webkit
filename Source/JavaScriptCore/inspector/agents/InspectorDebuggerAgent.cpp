@@ -477,6 +477,11 @@ void InspectorDebuggerAgent::getScriptSource(ErrorString& error, const String& s
     else
         error = ASCIILiteral("No script for id: ") + scriptIDStr;
 }
+    
+void InspectorDebuggerAgent::setScriptSource(ErrorString& error, const String& scriptID, const String& scriptSource)
+{
+    
+}
 
 void InspectorDebuggerAgent::getFunctionDetails(ErrorString& errorString, const String& functionId, RefPtr<Inspector::Protocol::Debugger::FunctionDetails>& details)
 {
