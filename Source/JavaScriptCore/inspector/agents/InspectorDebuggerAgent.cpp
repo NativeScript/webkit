@@ -480,7 +480,9 @@ void InspectorDebuggerAgent::getScriptSource(ErrorString& error, const String& s
     
 void InspectorDebuggerAgent::setScriptSource(ErrorString& error, const String& scriptID, const String& scriptSource)
 {
-    
+    UNUSED_PARAM(error);
+    UNUSED_PARAM(scriptID);
+    UNUSED_PARAM(scriptSource);
 }
 
 void InspectorDebuggerAgent::getFunctionDetails(ErrorString& errorString, const String& functionId, RefPtr<Inspector::Protocol::Debugger::FunctionDetails>& details)
