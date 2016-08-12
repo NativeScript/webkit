@@ -471,7 +471,12 @@ void InspectorDebuggerAgent::getScriptSource(ErrorString& error, const String& s
     
 void InspectorDebuggerAgent::setScriptSource(ErrorString& error, const String& scriptID, const String& scriptSource)
 {
-    
+    JSC::SourceID sourceID = scriptID.toIntPtr();
+    ScriptsMap::iterator it = m_scripts.find(sourceID);
+    if (it != m_scripts.end())
+        it->value.source = scriptSource;
+    else
+        error = ASCIILiteral("No script for id: ") + scriptID;
 }
 
 void InspectorDebuggerAgent::getFunctionDetails(ErrorString& errorString, const String& functionId, RefPtr<Inspector::Protocol::Debugger::FunctionDetails>& details)
