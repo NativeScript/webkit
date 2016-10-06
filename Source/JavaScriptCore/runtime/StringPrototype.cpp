@@ -1960,7 +1960,7 @@ static JSValue normalize(ExecState* exec, const UChar* source, size_t sourceLeng
     status = U_ZERO_ERROR;
     unorm_normalize(source, sourceLength, form, 0, buffer, normalizedStringLength, &status);
     if (U_FAILURE(status))
-        return throwTypeError(exec);
+        return throwTypeError(exec, scope);
 
     return jsString(exec, impl.get());
 }

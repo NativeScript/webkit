@@ -1369,7 +1369,7 @@ WEBKIT_CREATE_FORWARDING_HEADERS(JavaScriptCore DIRECTORIES ${JavaScriptCore_FOR
 add_subdirectory(shell)
 
 WEBKIT_WRAP_SOURCELIST(${JavaScriptCore_SOURCES})
-# WEBKIT_FRAMEWORK(JavaScriptCore)
+WEBKIT_FRAMEWORK(JavaScriptCore)
 
 if (NOT "${PORT}" STREQUAL "Mac")
     if (${JavaScriptCore_LIBRARY_TYPE} STREQUAL "SHARED")
