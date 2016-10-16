@@ -48,6 +48,7 @@ public:
     ArrayBufferContents() 
         : m_data(0)
         , m_sizeInBytes(0)
+        , m_freeWhenDone(false)
     { }
 
     inline ~ArrayBufferContents();
@@ -56,7 +57,7 @@ public:
     unsigned sizeInBytes() { return m_sizeInBytes; }
 
 private:
-    ArrayBufferContents(void* data, unsigned sizeInBytes, bool freeWhenDone = true)
+    ArrayBufferContents(void* data, unsigned sizeInBytes, bool freeWhenDone)
         : m_data(data)
         , m_sizeInBytes(sizeInBytes)
         , m_freeWhenDone(freeWhenDone)
@@ -75,8 +76,10 @@ private:
         ASSERT(!other.m_data);
         other.m_data = m_data;
         other.m_sizeInBytes = m_sizeInBytes;
+        other.m_freeWhenDone = m_freeWhenDone;
         m_data = 0;
         m_sizeInBytes = 0;
+        m_freeWhenDone = false;
     }
 
     void copyTo(ArrayBufferContents& other)
@@ -100,7 +103,8 @@ public:
     static inline PassRefPtr<ArrayBuffer> create(ArrayBuffer*);
     static inline PassRefPtr<ArrayBuffer> create(const void* source, unsigned byteLength);
     static inline PassRefPtr<ArrayBuffer> create(ArrayBufferContents&);
-    static inline PassRefPtr<ArrayBuffer> createAdopted(const void* data, unsigned byteLength, bool freeWhenDone = true);
+    static inline PassRefPtr<ArrayBuffer> createAdopted(const void* data, unsigned byteLength, bool freeWhenDone);
+    static inline PassRefPtr<ArrayBuffer> createFromBytes(const void* data, unsigned byteLength, bool freeWhenDone);
 
     // Only for use by Uint8ClampedArray::createUninitialized and SharedBuffer::createArrayBuffer.
     static inline PassRefPtr<ArrayBuffer> createUninitialized(unsigned numElements, unsigned elementByteSize);
@@ -177,6 +181,11 @@ PassRefPtr<ArrayBuffer> ArrayBuffer::create(ArrayBufferContents& contents)
 }
 
 PassRefPtr<ArrayBuffer> ArrayBuffer::createAdopted(const void* data, unsigned byteLength, bool freeWhenDone)
+{
+    return createFromBytes(data, byteLength, freeWhenDone);
+}
+    
+PassRefPtr<ArrayBuffer> ArrayBuffer::createFromBytes(const void* data, unsigned byteLength, bool freeWhenDone)
 {
     ArrayBufferContents contents(const_cast<void*>(data), byteLength, freeWhenDone);
     return create(contents);
@@ -277,6 +286,7 @@ void ArrayBufferContents::tryAllocate(unsigned numElements, unsigned elementByte
 
     if (allocationSucceeded) {
         result.m_sizeInBytes = numElements * elementByteSize;
+        result.m_freeWhenDone = true;
         return;
     }
     result.m_data = 0;

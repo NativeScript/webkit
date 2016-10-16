@@ -501,7 +501,7 @@ ArrayBuffer* JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory(JSArrayBuf
         // FIXME: consider doing something like "subtracting" from extra memory
         // cost, since right now this case will cause the GC to think that we reallocated
         // the whole buffer.
-        buffer = ArrayBuffer::createAdopted(thisObject->vector(), thisObject->byteLength());
+        buffer = ArrayBuffer::createAdopted(thisObject->vector(), thisObject->byteLength(), true);
         break;
         
     default:
