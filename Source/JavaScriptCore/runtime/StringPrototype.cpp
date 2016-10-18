@@ -20,6 +20,10 @@
  *
  */
 
+/*
+ * Copyright (C) 2016 Telerik AD. All rights reserved. (as modified)
+ */
+
 #include "config.h"
 #include "StringPrototype.h"
 
