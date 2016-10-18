@@ -42,7 +42,7 @@
 #include <wtf/StringExtras.h>
 #include <wtf/text/StringBuilder.h>
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) && !TARGET_OS_IPHONE
 #include <crt_externs.h>
 #endif
 
@@ -414,6 +414,7 @@ void Options::initialize()
             // The evn var should be the name of the option prefixed with
             // "JSC_".
 #if PLATFORM(COCOA)
+#if !TARGET_OS_IPHONE
             bool hasBadOptions = false;
             for (char** envp = *_NSGetEnviron(); *envp; envp++) {
                 const char* env = *envp;
@@ -426,6 +427,7 @@ void Options::initialize()
             }
             if (hasBadOptions && Options::validateOptions())
                 CRASH();
+#endif
 #else // PLATFORM(COCOA)
 #define FOR_EACH_OPTION(type_, name_, defaultValue_, availability_, description_) \
             overrideOptionWithHeuristic(name_(), name_##ID, "JSC_" #name_, Availability::availability_);
