@@ -23,14 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+ * Copyright (C) 2016 Telerik AD. All rights reserved. (as modified)
+ */
+
 #pragma once
 
 #include <Block.h>
+#import <objc/runtime.h>
 #include <wtf/Assertions.h>
 
 namespace WTF {
-
-extern "C" void* _NSConcreteMallocBlock[32];
 
 template<typename> class BlockPtr;
 
@@ -72,7 +75,7 @@ public:
         };
 
         Block* block = static_cast<Block*>(malloc(sizeof(Block)));
-        block->isa = _NSConcreteMallocBlock;
+        block->isa = objc_getClass("__NSMallocBlock__");
 
         enum {
             BLOCK_NEEDS_FREE = (1 << 24),
