@@ -161,9 +161,10 @@ protected:
     }
 
 private:
-#if OS(DARWIN) && HAVE(REMAP_JIT)
+#if OS(DARWIN) && HAVE(REMAP_JIT) && USE(APPLE_INTERNAL_SDK)
     void initializeSeparatedWXHeaps(void* stubBase, size_t stubSize, void* jitBase, size_t jitSize)
     {
+        
         mach_vm_address_t writableAddr = 0;
 
         // Create a second mapping of the JIT region at a random address.
