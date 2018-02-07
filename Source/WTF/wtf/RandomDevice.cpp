@@ -84,7 +84,13 @@ RandomDevice::~RandomDevice()
 void RandomDevice::cryptographicallyRandomValues(unsigned char* buffer, size_t length)
 {
 #if OS(DARWIN)
+    
+#if PLATFORM(IOS) && !USE(APPLE_INTERNAL_SDK)
+    RELEASE_ASSERT(!SecRandomCopyBytes(kSecRandomDefault, length, buffer));
+#else
     RELEASE_ASSERT(!CCRandomCopyBytes(kCCRandomDefault, buffer, length));
+#endif
+
 #elif OS(UNIX)
     ssize_t amountRead = 0;
     while (static_cast<size_t>(amountRead) < length) {

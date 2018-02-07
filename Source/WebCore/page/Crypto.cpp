@@ -62,8 +62,15 @@ ExceptionOr<void> Crypto::getRandomValues(ArrayBufferView& array)
     if (array.byteLength() > 65536)
         return Exception { QUOTA_EXCEEDED_ERR };
 #if OS(DARWIN)
+    
+#if !USE(APPLE_INTERNAL_SDK)
+    int rc = SecRandomCopyBytes(kSecRandomDefault, array.byteLength(), array.baseAddress());
+    RELEASE_ASSERT(rc == errSecSuccess);
+#else
     int rc = CCRandomCopyBytes(kCCRandomDefault, array.baseAddress(), array.byteLength());
     RELEASE_ASSERT(rc == kCCSuccess);
+#endif
+    
 #else
     cryptographicallyRandomValues(array.baseAddress(), array.byteLength());
 #endif

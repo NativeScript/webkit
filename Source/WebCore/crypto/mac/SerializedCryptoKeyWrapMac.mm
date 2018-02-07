@@ -76,7 +76,12 @@ static NSString* masterKeyAccountNameForCurrentApplication()
 static bool createAndStoreMasterKey(Vector<uint8_t>& masterKeyData)
 {
     masterKeyData.resize(masterKeySizeInBytes);
+#if PLATFORM(IOS) && !USE(APPLE_INTERNAL_SDK)
+    int rc = SecRandomCopyBytes(kSecRandomDefault, masterKeyData.size(), masterKeyData.data());
+#else
     int rc = CCRandomCopyBytes(kCCRandomDefault, masterKeyData.data(), masterKeyData.size());
+#endif
+
     RELEASE_ASSERT(rc == kCCSuccess);
 
 #if PLATFORM(IOS)
@@ -192,7 +197,12 @@ bool deleteDefaultWebCryptoMasterKey()
 bool wrapSerializedCryptoKey(const Vector<uint8_t>& masterKey, const Vector<uint8_t>& key, Vector<uint8_t>& result)
 {
     Vector<uint8_t> kek(16);
+#if PLATFORM(IOS) && !USE(APPLE_INTERNAL_SDK)
+    int rc = SecRandomCopyBytes(kSecRandomDefault, kek.size(), kek.data());
+#else
     int rc = CCRandomCopyBytes(kCCRandomDefault, kek.data(), kek.size());
+#endif
+
     RELEASE_ASSERT(rc == kCCSuccess);
 
     Vector<uint8_t> wrappedKEK(CCSymmetricWrappedSize(kCCWRAPAES, kek.size()));
