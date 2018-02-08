@@ -32,7 +32,11 @@
 #include "Crypto.h"
 
 #if OS(DARWIN)
+#if PLATFORM(IOS) && !USE(APPLE_INTERNAL_SDK)
+#include <Security/SecRandom.h>
+#else
 #include "CommonCryptoUtilities.h"
+#endif
 #endif
 #include "Document.h"
 #include "ExceptionCode.h"

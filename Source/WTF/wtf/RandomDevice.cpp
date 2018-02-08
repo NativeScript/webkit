@@ -42,7 +42,11 @@
 #endif
 
 #if OS(DARWIN)
+#if PLATFORM(IOS) && !USE(APPLE_INTERNAL_SDK)
+#include <Security/SecRandom.h>
+#else
 #include "CommonCryptoSPI.h"
+#endif
 #endif
 
 namespace WTF {
