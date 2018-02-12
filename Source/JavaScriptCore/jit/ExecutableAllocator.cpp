@@ -106,7 +106,7 @@ JS_EXPORTDATA bool useFastPermisionsJITCopy { false };
 
 JS_EXPORTDATA JITWriteSeparateHeapsFunction jitWriteSeparateHeapsFunction;
 
-#if !USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION) && HAVE(REMAP_JIT)
+#if !USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION) && HAVE(REMAP_JIT) && USE(APPLE_INTERNAL_SDK)
 static uintptr_t startOfFixedWritableMemoryPool;
 #endif
 
